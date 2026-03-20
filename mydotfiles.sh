@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 DOT_DIR="$HOME/macos-dotfile"
 CONF_DIR="$HOME/.config"
-EXCLUDE_FILE=$DOT_DIR/RSYNC_EX_LIST
-
+EXCLUDE_FILE="$DOT_DIR/RSYNC_EX_LIST"
+SYMLINK_PATH="/usr/local/bin/mydotfiles"
 FILES=(
 	"$HOME/.bashrc"
 	"$HOME/.bash_profile"
@@ -18,7 +18,7 @@ RSYNC_EX_LIST=(
 )
 
 
-update() {
+update_fc() {
    echo "Updating dotfiles.."
    
    for file in "${FILES[@]}"; do
@@ -53,9 +53,10 @@ update() {
    if [ -f "$EXCLUDE_FILE" ]; then
    	rm $EXCLUDE_FILE
    fi
+push_fc
 }
 
-push() {
+push_fc() {
    cd "$DOT_DIR" || exit
    
    if [[ -n $(git status -s) ]]; then
@@ -69,15 +70,39 @@ push() {
    fi
 }
 
+pull_fc (){
+   cd "$DOT_DIR" || exit
+   git pull
+}
+
+symlink_fc (){
+   if [ -a "$SYMLINK_PATH" ]; then
+	   echo "Warning: Symlink to $SYMLINK_PATH already exists"
+   else 
+	   sudo ln -s "$DOT_DIR/mydotfiles.sh" "$SYMLINK_PATH"
+	   sudo chmod +x "$SYMLINK_PATH"
+	   echo "Symlink to $SYMLINK_PATH created"
+   fi
+}
+
 case "$1" in
 	update)
-		update
+		update_fc
 		;;
 	push)
-		push
+		push_fc
+		;;
+	pull)
+		pull_fc
+		;;
+	symlink)
+		symlink_fc
+		;;
+	restore)
+		restore_fc
 		;;
         *)
-		echo "Usage: $0 {update|push}"
+		echo "Usage: $0 {update|restore|push|pull|symlink}"
 		exit 1
 		;;
 esac
