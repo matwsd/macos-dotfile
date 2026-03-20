@@ -1,0 +1,5 @@
+font-family = GeistMono NFM
+font-size = 14
+theme = dark:Afterglow,light:Dayfox
+macos-window-buttons = hidden
+macos-titlebar-style = hidden

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DOT_DIR="$HOME/macos-dotfiles"
+DOT_DIR="$HOME//macos-dotfile"
 CONF_DIR="$HOME/.config"
 
 FILES=(
