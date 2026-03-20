@@ -48,7 +48,7 @@ for dir in "${DIR_CONF[@]}"; do
 	fi
 done
 
-if [ -f "$RSYNC_EX_LIST" ]; then
+if [ -f "$EXCLUDE_FILE" ]; then
 	rm $EXCLUDE_FILE
 fi
 
