@@ -41,7 +41,7 @@ if [[ -n $(git status -s) ]]; then
 	echo "Changes detected. Push to Git"
 
 	git add .
-	git commit -m "Updated dotfiles: $(date + '%Y-%m-%d %H:%M:%S')"
+	git commit -m "Updated dotfiles: $(date '+%Y-%m-%d|%H:%M:%S')"
 	git push origin main
 
 	echo "Pushed!"
