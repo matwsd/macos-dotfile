@@ -1,7 +1,8 @@
 #!/bin/bash
 
-DOT_DIR="$HOME//macos-dotfile"
+DOT_DIR="$HOME/macos-dotfile"
 CONF_DIR="$HOME/.config"
+EXCLUDE_FILE=$DOT_DIR/RSYNC_EX_LIST
 
 FILES=(
 	"$HOME/.bashrc"
@@ -10,8 +11,12 @@ FILES=(
 
 DIR_CONF=(
 	"$CONF_DIR"
-	"$HOME/bin"
 )
+
+RSYNC_EX_LIST=(
+        "newdir"
+)
+
 echo "Updating dotfiles.."
 
 for file in "${FILES[@]}"; do
@@ -23,19 +28,31 @@ for file in "${FILES[@]}"; do
 	fi
 done
 
+if [[ ${RSYNC_EX_LIST[@]} ]]; then
+	for ex in "${RSYNC_EX_LIST[@]}"; do
+		echo "$ex" >> $EXCLUDE_FILE 
+	done
+fi
+
+
 for dir in "${DIR_CONF[@]}"; do
 	if [ -d "$dir" ]; then
-		if [ -z "$(ls -A "$dir")"]; then
+		if [ -z "$(ls -A "$dir")" ]; then
 			echo "Skip: $dir is empty"
 			continue
 		fi
-		cp -R "$dir" "$DOT_DIR"
-		echo "Updated:" "$(tree $dir)"
+		rsync -a --progress --delete --exclude-from="$EXCLUDE_FILE" "$dir" "$DOT_DIR"
+		echo "Updated: $dir"
 	else
 		echo "Warning: no file found in $dir"
 	fi
 done
 
+if [ -f "$RSYNC_EX_LIST" ]; then
+	rm $EXCLUDE_FILE
+fi
+
+cd "$DOT_DIR" || exit
 
 if [[ -n $(git status -s) ]]; then
 	echo "Changes detected. Push to Git"
